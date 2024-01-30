@@ -1,7 +1,3 @@
-// In this file you can configure migrate-mongo
-
-const {env} = require('process');
-
 const config = {
   mongodb: {
     url: process.env.PARSE_SERVER_DATABASE_URI,
