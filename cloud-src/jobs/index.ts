@@ -1,1 +1,2 @@
-import './test';
+import './checkUsersBirthday';
+import './checkLimitedBonuses';
