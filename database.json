@@ -1,6 +1,0 @@
-{
-  "description": "db-migrate config. (https://db-migrate.readthedocs.io/en/latest/Getting%20Started/configuration/)",
-  "local": {"ENV": "PARSE_SERVER_DATABASE_URI"},
-  "development": {"ENV": "PARSE_SERVER_DATABASE_URI"},
-  "prod": {"ENV": "PARSE_SERVER_DATABASE_URI"}
-}

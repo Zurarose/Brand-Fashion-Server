@@ -29,7 +29,6 @@ COPY yarn.lock yarn.lock
 RUN  yarn
 
 COPY config config
-COPY database.json database.json
 COPY schema.graphql schema.graphql
 
 # conditional COPY is currently open issue for docker
