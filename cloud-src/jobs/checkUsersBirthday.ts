@@ -1,7 +1,7 @@
 import User from '../classes/User';
 import {ENV_VAR_NAMES} from '../lib/constants';
 
-const JOB_NAME = 'Check Limited Bonuses';
+const JOB_NAME = 'Check_Users_Birthday';
 
 Parse.Cloud.job(JOB_NAME, async () => {
   const jobs = await new Parse.Query('_JobStatus')
@@ -9,6 +9,7 @@ Parse.Cloud.job(JOB_NAME, async () => {
     .equalTo('status', 'running')
     .count({useMasterKey: true});
   if (jobs > 1) throw Error('decline job: already running');
+  console.log(`${JOB_NAME} - START`);
 
   const currentDay = `${new Date().getDate()}/${new Date().getMonth()}`;
 
@@ -28,11 +29,12 @@ Parse.Cloud.job(JOB_NAME, async () => {
       const birthday = `${new Date(birthdayDate).getDate()}/${new Date(birthdayDate).getMonth()}`;
       if (birthday === currentDay) {
         user.increment('giftedBonuses', giftAmount);
+        user.set('lastGiftDate', new Date());
         await user.save(null, {useMasterKey: true});
       }
     },
     {useMasterKey: true},
   );
-
+  console.log(`${JOB_NAME} - END`);
   return;
 });

@@ -1,7 +1,7 @@
 import User from '../classes/User';
 import {ENV_VAR_NAMES} from '../lib/constants';
 
-const JOB_NAME = 'Check Limited Bonuses';
+const JOB_NAME = 'Check_Limited_Bonuses';
 
 Parse.Cloud.job(JOB_NAME, async () => {
   const jobs = await new Parse.Query('_JobStatus')
@@ -9,6 +9,7 @@ Parse.Cloud.job(JOB_NAME, async () => {
     .equalTo('status', 'running')
     .count({useMasterKey: true});
   if (jobs > 1) throw Error('decline job: already running');
+  console.log(`${JOB_NAME} - START`);
 
   const config = await Parse.Config.get({useMasterKey: true});
   const dayLimits = Number(config.get(ENV_VAR_NAMES.LIMITED_BONUSES_TIMEOUT_DAYS) || 0);
@@ -21,6 +22,7 @@ Parse.Cloud.job(JOB_NAME, async () => {
     },
     {useMasterKey: true},
   );
+  console.log(`${JOB_NAME} - END`);
 
   return;
 });
