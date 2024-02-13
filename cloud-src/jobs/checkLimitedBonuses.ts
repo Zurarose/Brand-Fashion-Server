@@ -1,4 +1,4 @@
-import User from '../classes/User';
+import Client from '../classes/Client';
 import {ENV_VAR_NAMES} from '../lib/constants';
 
 const JOB_NAME = 'Check_Limited_Bonuses';
@@ -14,7 +14,7 @@ Parse.Cloud.job(JOB_NAME, async () => {
   const config = await Parse.Config.get({useMasterKey: true});
   const dayLimits = Number(config.get(ENV_VAR_NAMES.LIMITED_BONUSES_TIMEOUT_DAYS) || 0);
 
-  await new Parse.Query(User._className).greaterThan('lastGiftDate', {$relativeTime: `${dayLimits} days ago`}).each(
+  await new Parse.Query(Client._className).greaterThan('lastGiftDate', {$relativeTime: `${dayLimits} days ago`}).each(
     async (item) => {
       item.set('lastGiftDate', undefined);
       item.set('giftedBonuses', 0);

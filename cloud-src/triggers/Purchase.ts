@@ -1,7 +1,7 @@
 'use strict';
 
 import Model from '../classes/Purchase';
-import User from '../classes/User';
+import Client from '../classes/Client';
 import CloudTriggers from '../lib/CloudTriggers';
 import {ENV_VAR_NAMES, ROLE_NAMES} from '../lib/constants';
 
@@ -9,15 +9,10 @@ import {ENV_VAR_NAMES, ROLE_NAMES} from '../lib/constants';
 CloudTriggers.beforeSave(Model._className, (request) => {
   const object = request.object as Model;
   const isNew = !request.original;
-  const user = request.user;
-  if (!isNew || !user) return false;
-
+  if (!isNew) return false;
   const acl = new Parse.ACL();
   acl.setRoleReadAccess(ROLE_NAMES.admin, true);
   acl.setRoleWriteAccess(ROLE_NAMES.admin, true);
-  acl.setPublicReadAccess(true);
-  acl.setReadAccess(user, true);
-  acl.setWriteAccess(user, true);
   object.setACL(acl);
   return true;
 });
@@ -25,11 +20,10 @@ CloudTriggers.beforeSave(Model._className, (request) => {
 CloudTriggers.beforeSave(Model._className, async (request) => {
   const object = request.object as Model;
   const isNew = !request.original;
-  const user = request.user;
-  if (!isNew || !user || !object.get('User')?.id) return false;
+  if (!isNew || !object.get('Client')?.id) return false;
   const config = await Parse.Config.get({useMasterKey: true});
 
-  const client = await new Parse.Query(User._className).get(object.get('User')?.id, {useMasterKey: true});
+  const client = await new Parse.Query(Client._className).get(object.get('Client')?.id, {useMasterKey: true});
 
   const percent = Number(config.get(ENV_VAR_NAMES.GETTING_PERCENT_BONUSES) || 0);
   const price = Number(object.get('price') || 0);

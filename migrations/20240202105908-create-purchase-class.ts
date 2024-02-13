@@ -6,7 +6,7 @@ exports.up = async (db: string | {}, next: Function) => {
   try {
     const {instance, schemaFields} = await createAndGetSchema('Purchase');
 
-    if (!schemaFields.includes('User')) instance.addPointer('User', '_User');
+    if (!schemaFields.includes('Client')) instance.addPointer('Client', 'Client');
 
     if (!schemaFields.includes('itemName')) instance.addString('itemName');
 

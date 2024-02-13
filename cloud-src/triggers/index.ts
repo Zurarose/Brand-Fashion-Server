@@ -1,1 +1,2 @@
 import './User';
+import './Purchase';

@@ -1,4 +1,5 @@
-import User from '../classes/User';
+import Client from '../classes/Client';
+
 import {ENV_VAR_NAMES} from '../lib/constants';
 
 const JOB_NAME = 'Check_Users_Birthday';
@@ -16,7 +17,7 @@ Parse.Cloud.job(JOB_NAME, async () => {
   const config = await Parse.Config.get({useMasterKey: true});
   const giftAmount = Number(config.get(ENV_VAR_NAMES.GIFT_BONUSES_USER_BIRTHDAY) || 0);
 
-  await new Parse.Query(User._className).each(
+  await new Parse.Query(Client._className).each(
     async (user) => {
       const giftDay = user.get('lastGiftDate') || 0;
       const lastGiftDay = `${new Date(giftDay).getDate()}/${new Date(giftDay).getMonth()}`;

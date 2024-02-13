@@ -4,7 +4,7 @@ import {createAndGetSchema} from './lib/getSchema';
 
 exports.up = async (db: string | {}, next: Function) => {
   try {
-    const {instance, schemaFields} = await createAndGetSchema('_User');
+    const {instance, schemaFields} = await createAndGetSchema('Client');
 
     if (!schemaFields.includes('fullName')) instance.addString('fullName');
 
@@ -13,6 +13,8 @@ exports.up = async (db: string | {}, next: Function) => {
     if (!schemaFields.includes('bonuses')) instance.addNumber('bonuses', {defaultValue: 0});
 
     if (!schemaFields.includes('giftedBonuses')) instance.addNumber('giftedBonuses', {defaultValue: 0});
+
+    if (!schemaFields.includes('phone')) instance.addString('phone', {defaultValue: undefined});
 
     if (!schemaFields.includes('lastGiftDate')) instance.addDate('lastGiftDate');
 

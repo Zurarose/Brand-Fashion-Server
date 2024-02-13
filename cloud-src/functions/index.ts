@@ -1,4 +1,4 @@
 'use strict';
 
-import './user-functions';
+import './client-functions';
 import './common-functions';
