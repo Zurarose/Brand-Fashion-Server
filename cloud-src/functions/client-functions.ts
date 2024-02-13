@@ -1,4 +1,4 @@
-import User from '../classes/User';
+import Client from '../classes/Client';
 
 Parse.Cloud.define(
   'giftBonuses',
@@ -7,7 +7,7 @@ Parse.Cloud.define(
     const user = request.user;
     if (!user) throw new Error('Authentication required');
 
-    const client = await new Parse.Query(User._className).equalTo('objectId', userId).first({useMasterKey: true});
+    const client = await new Parse.Query(Client._className).equalTo('objectId', userId).first({useMasterKey: true});
 
     if (!client) return false;
 
