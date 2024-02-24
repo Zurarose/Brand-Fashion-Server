@@ -16,7 +16,6 @@ Parse.Cloud.job(JOB_NAME, async () => {
 
   await new Parse.Query(Client._className).lessThan('lastGiftDate', {$relativeTime: `${dayLimits} days ago`}).each(
     async (item) => {
-      console.log('ITEM ID', item.id);
       item.set('lastGiftDate', undefined);
       item.set('giftedBonuses', 0);
       await item.save(null, {useMasterKey: true});

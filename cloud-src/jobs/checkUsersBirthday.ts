@@ -14,8 +14,6 @@ Parse.Cloud.job(JOB_NAME, async () => {
 
   const currentDay = `${new Date().getDate()}/${new Date().getMonth()}`;
 
-  console.log('CURRENT DAY', currentDay);
-
   const config = await Parse.Config.get({useMasterKey: true});
   const giftAmount = Number(config.get(ENV_VAR_NAMES.GIFT_BONUSES_USER_BIRTHDAY) || 0);
 
@@ -31,7 +29,6 @@ Parse.Cloud.job(JOB_NAME, async () => {
 
       const birthday = `${new Date(birthdayDate).getDate()}/${new Date(birthdayDate).getMonth()}`;
 
-      console.log('USER BITHDAY', birthday);
       if (birthday === currentDay) {
         user.increment('giftedBonuses', giftAmount);
         user.set('lastGiftDate', new Date());
