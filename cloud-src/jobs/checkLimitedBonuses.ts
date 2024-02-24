@@ -14,8 +14,9 @@ Parse.Cloud.job(JOB_NAME, async () => {
   const config = await Parse.Config.get({useMasterKey: true});
   const dayLimits = Number(config.get(ENV_VAR_NAMES.LIMITED_BONUSES_TIMEOUT_DAYS) || 0);
 
-  await new Parse.Query(Client._className).greaterThan('lastGiftDate', {$relativeTime: `${dayLimits} days ago`}).each(
+  await new Parse.Query(Client._className).lessThan('lastGiftDate', {$relativeTime: `${dayLimits} days ago`}).each(
     async (item) => {
+      console.log('ITEM ID', item.id);
       item.set('lastGiftDate', undefined);
       item.set('giftedBonuses', 0);
       await item.save(null, {useMasterKey: true});
