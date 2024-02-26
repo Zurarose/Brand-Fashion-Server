@@ -49,6 +49,6 @@ CloudTriggers.beforeSave(Model._className, async (request) => {
   const newBonuses = (price / 100) * percent;
   object.set('bonuseReceived', newBonuses);
 
-  if (!clientGiftedBonuses && usedBonuses) client.increment('bonuses', newBonuses);
+  if (!clientGiftedBonuses) client.increment('bonuses', newBonuses);
   return client.save(null, {useMasterKey: true});
 });
