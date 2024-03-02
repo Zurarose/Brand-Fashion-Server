@@ -52,3 +52,18 @@ CloudTriggers.beforeSave(Model._className, async (request) => {
   if (!clientGiftedBonuses) client.increment('bonuses', newBonuses);
   return client.save(null, {useMasterKey: true});
 });
+
+CloudTriggers.afterSave(Model._className, (request) => {
+  const object = request.object as Model;
+  const isNew = !request.original;
+  if (!isNew) return false;
+
+  const clientId = object.get('Client')?.id;
+  if (!clientId) return false;
+
+  const client = new Parse.Object('Client');
+  client.id = clientId;
+  client.relation('Purchases').add(object);
+
+  return client.save(null, {useMasterKey: true});
+});
