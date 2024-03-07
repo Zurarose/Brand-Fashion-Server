@@ -30,10 +30,10 @@ Parse.Cloud.define(
         type: Number,
         error: 'amount number is requried field',
       },
-      limited: {
+      giftedBonuses: {
         required: true,
-        type: Boolean,
-        error: 'if bonuses limited is requried field',
+        type: Number,
+        error: 'Gifted bonuses number is requried field',
       },
     },
     requireUser: true,
