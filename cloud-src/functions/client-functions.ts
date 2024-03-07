@@ -1,9 +1,9 @@
 import Client from '../classes/Client';
 
 Parse.Cloud.define(
-  'giftBonuses',
+  'setBonuses',
   async (request) => {
-    const {userId, amount, limited} = request.params;
+    const {userId, amountgifted, amount} = request.params;
     const user = request.user;
     if (!user) throw new Error('Authentication required');
 
@@ -11,9 +11,10 @@ Parse.Cloud.define(
 
     if (!client) return false;
 
-    limited ? client.increment('giftedBonuses', amount) : client.increment('bonuses', amount);
+    client.set('giftedBonuses', amountgifted);
+    client.set('bonuses', amount);
 
-    if (limited) client.set('lastGiftDate', new Date());
+    if (amountgifted !== client.get('giftedBonuses')) client.set('lastGiftDate', new Date());
     await client.save(null, {useMasterKey: true});
     return true;
   },

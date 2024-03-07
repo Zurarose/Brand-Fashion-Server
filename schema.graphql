@@ -6,7 +6,7 @@ type GetConfigPayload {
 }
 
 extend type Mutation {
-  giftBonuses(userId: String!, amount: String!, limited: Boolean!): Boolean! @resolve
+  setBonuses(userId: String!, amount: String!, amountgifted: String!): Boolean! @resolve
   setConfig(LIMITED_BONUSES_TIMEOUT_DAYS: Int!, GETTING_PERCENT_BONUSES: Int!, GIFT_BONUSES_USER_BIRTHDAY: Int!): Boolean! @resolve
 }
 
