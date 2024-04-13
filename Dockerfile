@@ -36,6 +36,7 @@ COPY .babelrc .babelrc
 
 COPY --from=build /usr/src/js-dist/cloud-dist cloud-dist
 COPY --from=build /usr/src/js-dist/migrations migrations
+COPY --from=build /usr/src/ts-build/migrations/old-data migrations/old-data
 COPY index.js index.js
 
 EXPOSE 1337
