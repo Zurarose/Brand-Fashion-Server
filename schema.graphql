@@ -3,11 +3,12 @@ type GetConfigPayload {
   LIMITED_BONUSES_TIMEOUT_DAYS: Int
   GETTING_PERCENT_BONUSES: Float
   GIFT_BONUSES_USER_BIRTHDAY: Int
+  MAX_BONUSES_PER_PURCHASE_PERCENT: Int
 }
 
 extend type Mutation {
   setBonuses(userId: String!, amount: Float!, amountgifted: Float!): Boolean! @resolve
-  setConfig(LIMITED_BONUSES_TIMEOUT_DAYS: Int!, GETTING_PERCENT_BONUSES: Float!, GIFT_BONUSES_USER_BIRTHDAY: Int!): Boolean! @resolve
+  setConfig(LIMITED_BONUSES_TIMEOUT_DAYS: Int!, GETTING_PERCENT_BONUSES: Float!, GIFT_BONUSES_USER_BIRTHDAY: Int!, MAX_BONUSES_PER_PURCHASE_PERCENT: Int!): Boolean! @resolve
 }
 
 extend type Query {

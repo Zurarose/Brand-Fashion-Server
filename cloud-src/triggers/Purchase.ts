@@ -26,6 +26,8 @@ CloudTriggers.beforeSave(Model._className, async (request) => {
   const client = await new Parse.Query(Client._className).get(object.get('Client')?.id, {useMasterKey: true});
 
   const percent = Number(config.get(ENV_VAR_NAMES.GETTING_PERCENT_BONUSES) || 0);
+  const max_amount_per_purchase = Number(config.get(ENV_VAR_NAMES.MAX_BONUSES_PER_PURCHASE_PERCENT) || 0);
+
   const price = Number(object.get('price') || 0);
 
   const clientGiftedBonuses = Number(client.get('giftedBonuses') || 0);
@@ -34,8 +36,10 @@ CloudTriggers.beforeSave(Model._className, async (request) => {
 
   const usedBonuses = Number(object.get('usedBonuses') || 0);
 
-  if (clientGiftedBonuses + clientBonuses < usedBonuses) throw new Error('Insufficient amount of bonuses');
+  if (usedBonuses > (price / 100) * max_amount_per_purchase)
+    throw new Error('Too much bonuses used. Max is: ' + max_amount_per_purchase) + ' percent';
 
+  if (clientGiftedBonuses + clientBonuses < usedBonuses) throw new Error('Insufficient amount of bonuses');
   if (clientGiftedBonuses > 0) {
     const newGiftedAmount = clientGiftedBonuses - usedBonuses;
     if (newGiftedAmount < 0) {
@@ -46,10 +50,12 @@ CloudTriggers.beforeSave(Model._className, async (request) => {
     client.decrement('bonuses', usedBonuses);
   }
 
-  const newBonuses = (price / 100) * percent;
-  object.set('bonuseReceived', newBonuses);
-
-  if (!clientGiftedBonuses) client.increment('bonuses', newBonuses);
+  object.set('bonuseReceived', 0);
+  if (!clientGiftedBonuses) {
+    const newBonuses = (price / 100) * percent;
+    object.set('bonuseReceived', newBonuses);
+    client.increment('bonuses', newBonuses);
+  }
   return client.save(null, {useMasterKey: true});
 });
 

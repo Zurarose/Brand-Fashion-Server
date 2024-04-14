@@ -6,6 +6,7 @@ exports.up = async function (db: string | {}, next: Function) {
       LIMITED_BONUSES_TIMEOUT_DAYS: 7,
       GETTING_PERCENT_BONUSES: 2.5,
       GIFT_BONUSES_USER_BIRTHDAY: 500,
+      MAX_BONUSES_PER_PURCHASE_PERCENT: 10,
     });
   } catch (e) {
     console.log(e);
