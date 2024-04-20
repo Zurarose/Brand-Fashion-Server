@@ -45,7 +45,7 @@ CloudTriggers.beforeSave(Model._className, async (request) => {
     if (newGiftedAmount < 0) {
       client.set('giftedBonuses', 0);
       client.decrement('bonuses', Math.abs(newGiftedAmount));
-    } else client.set('giftedBonuses', newGiftedAmount);
+    } else client.set('giftedBonuses', 0);
   } else {
     client.decrement('bonuses', usedBonuses);
   }
