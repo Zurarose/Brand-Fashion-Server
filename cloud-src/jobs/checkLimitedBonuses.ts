@@ -1,5 +1,6 @@
 import Client from '../classes/Client';
 import {ENV_VAR_NAMES} from '../lib/constants';
+import Logs from '../classes/Logs';
 
 const JOB_NAME = 'Check_Limited_Bonuses';
 
@@ -18,7 +19,10 @@ Parse.Cloud.job(JOB_NAME, async () => {
     async (item) => {
       item.set('lastGiftDate', undefined);
       item.set('giftedBonuses', 0);
-      await item.save(null, {useMasterKey: true});
+      const log = new Parse.Object(Logs._className);
+      log.set('text', 'bunus expired');
+      log.set('data', item?.toJSON());
+      await Promise.all([await item.save(null, {useMasterKey: true}), await log.save(null, {useMasterKey: true})]);
     },
     {useMasterKey: true},
   );

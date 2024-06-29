@@ -1,4 +1,5 @@
 import Client from '../classes/Client';
+import Logs from '../classes/Logs';
 
 import {ENV_VAR_NAMES} from '../lib/constants';
 
@@ -18,21 +19,24 @@ Parse.Cloud.job(JOB_NAME, async () => {
   const giftAmount = Number(config.get(ENV_VAR_NAMES.GIFT_BONUSES_USER_BIRTHDAY) || 0);
 
   await new Parse.Query(Client._className).each(
-    async (user) => {
-      const giftDay = user.get('lastGiftDate') || 0;
+    async (client) => {
+      const giftDay = client.get('lastGiftDate') || 0;
       const lastGiftDay = `${new Date(giftDay).getDate()}/${new Date(giftDay).getMonth()}`;
 
       if (lastGiftDay === currentDay) return;
 
-      const birthdayDate = user.get('birthday') as Date;
+      const birthdayDate = client.get('birthday') as Date;
       if (!birthdayDate) return;
 
       const birthday = `${new Date(birthdayDate).getDate()}/${new Date(birthdayDate).getMonth()}`;
 
       if (birthday === currentDay) {
-        user.increment('giftedBonuses', giftAmount);
-        user.set('lastGiftDate', new Date());
-        await user.save(null, {useMasterKey: true});
+        client.increment('giftedBonuses', giftAmount);
+        client.set('lastGiftDate', new Date());
+        const log = new Parse.Object(Logs._className);
+        log.set('text', 'birthday gift added');
+        log.set('data', client?.toJSON());
+        await Promise.all([await client.save(null, {useMasterKey: true}), await log.save(null, {useMasterKey: true})]);
       }
     },
     {useMasterKey: true},

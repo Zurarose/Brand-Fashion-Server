@@ -1,6 +1,7 @@
 'use strict';
 
 import Model from '../classes/Client';
+import Logs from '../classes/Logs';
 import CloudTriggers from '../lib/CloudTriggers';
 import {ROLE_NAMES} from '../lib/constants';
 
@@ -27,5 +28,35 @@ CloudTriggers.beforeSave(Model._className, async (request) => {
   if (!phone) return false;
   const count = await new Parse.Query(Model._className).equalTo('phone', phone).count({useMasterKey: true});
   if (count > 0) throw new Error('User already exists');
+  return true;
+});
+
+//logs
+CloudTriggers.afterSave(Model._className, async (request) => {
+  try {
+    const object = request.object as Model;
+    const isNew = !request.original;
+    if (!isNew) return false;
+    const log = new Parse.Object(Logs._className);
+    log.set('text', 'client added');
+    log.set('data', object?.toJSON());
+    await log.save(null, {useMasterKey: true});
+  } catch (error) {
+    console.log('log error', error);
+  }
+  return true;
+});
+
+//logs
+CloudTriggers.afterDelete(Model._className, async (request) => {
+  try {
+    const object = request.object as Model;
+    const log = new Parse.Object(Logs._className);
+    log.set('text', 'client deleted');
+    log.set('data', object?.toJSON());
+    await log.save(null, {useMasterKey: true});
+  } catch (error) {
+    console.log('log error', error);
+  }
   return true;
 });

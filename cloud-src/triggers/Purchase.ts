@@ -4,6 +4,7 @@ import Model from '../classes/Purchase';
 import Client from '../classes/Client';
 import CloudTriggers from '../lib/CloudTriggers';
 import {ENV_VAR_NAMES, ROLE_NAMES} from '../lib/constants';
+import Logs from '../classes/Logs';
 
 //as afterRegistration trigger to set ACL
 CloudTriggers.beforeSave(Model._className, (request) => {
@@ -44,17 +45,17 @@ CloudTriggers.beforeSave(Model._className, async (request) => {
     const newGiftedAmount = clientGiftedBonuses - usedBonuses;
     if (newGiftedAmount < 0) {
       client.set('giftedBonuses', 0);
-      client.decrement('bonuses', Math.abs(newGiftedAmount));
+      client.decrement('bonuses', Number(Math.abs(newGiftedAmount)?.toFixed(2)));
     } else client.set('giftedBonuses', 0);
   } else {
-    client.decrement('bonuses', usedBonuses);
+    client.decrement('bonuses', Number(usedBonuses?.toFixed(2)));
   }
 
   object.set('bonuseReceived', 0);
   if (!clientGiftedBonuses) {
     const newBonuses = (price / 100) * percent;
-    object.set('bonuseReceived', newBonuses);
-    client.increment('bonuses', newBonuses);
+    object.set('bonuseReceived', Number(newBonuses?.toFixed(2)));
+    client.increment('bonuses', Number(newBonuses?.toFixed(2)));
   }
   return client.save(null, {useMasterKey: true});
 });
@@ -72,4 +73,20 @@ CloudTriggers.afterSave(Model._className, (request) => {
   client.relation('Purchases').add(object);
 
   return client.save(null, {useMasterKey: true});
+});
+
+//logs
+CloudTriggers.afterSave(Model._className, async (request) => {
+  try {
+    const object = request.object as Model;
+    const isNew = !request.original;
+    if (!isNew) return false;
+    const log = new Parse.Object(Logs._className);
+    log.set('text', 'purchase added');
+    log.set('data', object?.toJSON());
+    await log.save(null, {useMasterKey: true});
+  } catch (error) {
+    console.log('log error', error);
+  }
+  return true;
 });
